@@ -1,77 +1,78 @@
 import React from 'react';
-import ReactFCCtest from 'react-fcctest';
 
 const drumData = {
-    openhat: {
+    q: {
       name: "Open Hihat",
       id: "Q",
-      src: "sounds/openhat.wav"
+      src: "https://www.dowling.ca/sounds/openhat.wav"
     },
-    tink: {
+    w: {
       name: "Tink",
       id: "W",
-      src: 'http://www.electrongate.com/dmxfiles/drumtraks/SCI_RIM.wav'
+      src: 'https://www.dowling.ca/sounds/tink.wav'
     },
-    ride: {
+    e: {
       name: "Ride Cymbal",
       id: "E",
-      src: "sounds/ride.wav"
+      src: "https://www.dowling.ca/sounds/ride.wav"
     },
-    hihat: {
+    a: {
       name: "Closed Hihat",
       id: "A",
-      src: "sounds/hihat.wav"
+      src: "https://www.dowling.ca/sounds/hihat.wav"
     },
-    snare: {
+    s: {
       name: "Snare",
       id: "S",
-      src: "sounds/snare.wav"
+      src: "https://www.dowling.ca/sounds/snare.wav"
     },
-    kick: {
+    d: {
       name: "Kick",
       id: "D",
-      src: "sounds/kick.wav"
+      src: "https://www.dowling.ca/sounds/kick.wav"
     },
-    boom: {
+    z: {
       name: "Boom",
       id: "Z",
-      src: "sounds/boom.wav"
+      src: "https://www.dowling.ca/sounds/boom.wav"
     },
-    clap: {
+    x: {
       name: "Clap",
       id: "X",
-      src: "sounds/clap.wav"
+      src: "https://www.dowling.ca/sounds/clap.wav"
     },
-    tom: {
+    c: {
       name: "Tom",
       id: "C",
-      src: "sounds/tom.wav"
+      src: "https://www.dowling.ca/sounds/tom.wav"
     }
 }
 
 class ButtonDr extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
   return (
     <button className="drum-pad" id={this.props.drum} onClick={this.props.onClick}>
-      {this.props.callIt}
-      <audio className='clip' id={this.props.callIt} scr={this.props.drumSrc} type='audio/wav'></audio>     
+      {this.props.audioId}
+      <audio className='clip' id={this.props.audioId} src={this.props.drumSrc} type='audio/wav'></audio>     
     </button>
   );
 }
 }
-class App extends React.Component
+class DrumMachine extends React.Component
 {
 constructor(props) {
   super(props);
-this.handleClick = this.handleClick.bind(this);
+  this.state = {
+    displayText: "placeholder"
+  }
+  this.handleClick = this.handleClick.bind(this);
+  this.setTheText = this.setTheText.bind(this);
+  this.handleKeydown = this.handleKeydown.bind(this);
   }
 renderButton(d) {
   return(<ButtonDr 
   drum = {d} 
-  callIt = {drumData[d].id}
+  audioId = {drumData[d].id}
   drumSrc = {drumData[d].src}
   onClick={() => this.handleClick(d)}
   />
@@ -80,76 +81,52 @@ renderButton(d) {
 handleClick(d) {
   let audio = drumData[d].id
   audio = document.getElementById(audio)
-  //audio.currentTime = 0
   audio.play()
-  console.log(audio)
+  this.setTheText(d)
 }
+componentDidMount() {  
+  document.addEventListener("keydown", this.handleKeydown); 
+  }
 
+handleKeydown(e) {
+  let drumId = String.fromCharCode(e.which)
+  let drumSrc = document.getElementById(drumId)
+  if (drumSrc) drumSrc.play()
+  drumId = drumId.toLowerCase()
+  if (drumSrc) this.setTheText(drumId)
+}
+setTheText(d) {
+  this.setState({
+    displayText: drumData[d].name
+  })
+}
 render() {
+  let displayDrumName = this.state.displayText
  return (
    <div id="drum-machine">
         <div id="drum-rows">
             <div id="a-row" className="row" >
-                {this.renderButton("openhat")}
-                {this.renderButton("tink")}
-                {this.renderButton("ride")}
+                {this.renderButton("q")}
+                {this.renderButton("w")}
+                {this.renderButton("e")}
             </div>
             <div id="b-row" className="row">
-                {this.renderButton("hihat")}
-                {this.renderButton("snare")}
-                {this.renderButton("kick")}
+                {this.renderButton("a")}
+                {this.renderButton("s")}
+                {this.renderButton("d")}
             </div>
             <div id="c-row" className="row">
-                {this.renderButton("boom")}
-                {this.renderButton("clap")}
-                {this.renderButton("tom")}
+                {this.renderButton("z")}
+                {this.renderButton("x")}
+                {this.renderButton("c")}
             </div>
         </div>
         <div className="card">
-<div id="display" className="card-body">This will be display</div>
+<div id="display" className="card-body">{displayDrumName}</div>
         </div>
     </div>
  );
 }
 }
 
-export default App;
-
-/*class Display extends React.Component
-  {
-    constructor(props) {
-      super(props);
-      }
-    componentDidMount() {
-      //const xdrumId = this.props.drumType;
-      console.log("Whoa!")
-    }
-
-render() {
-  return (
-    <p></p>
-  )}
-}
-*/
-/*componentDidMount() {   
-window.onkeydown = function(event) {
-    let k = event.key;
-    k = k.toUpperCase();
-    //alert(k);
-    let drumClk = document.getElementById("W");
-    if(drumClk) drumClk.play();
-    }
-}
-*/
-/*componentDidMount() {   
-  window.onkeydown = function(event) {
-      let k = event.key;
-      k = k.toUpperCase();
-      let audio = drumData[d].id;
-      audio = document.getElementById(audio);
-      let drumClk = document.getElementById(audio);
-      console.log(audio)
-      //if(drumClk) drumClk.play();
-      }
-  }
-  */
+export default DrumMachine;
